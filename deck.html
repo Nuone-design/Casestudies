@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nuwan — Design Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#0c0c0e;--s1:#111114;--s2:#18181c;--s3:#1e1e23;
+--b0:rgba(255,255,255,0.06);--b1:rgba(255,255,255,0.1);--b2:rgba(255,255,255,0.18);
+--text:#f0ede8;--t2:#b8b5b0;--t3:#888480;--t4:#555250;
+--blue:#4a8fd6;--red:#c4562d;--grn:#2a9e6e;--amb:#c07a1a;--pur:#8a72d8;
+--f:-apple-system,BlinkMacSystemFont,'Manrope',sans-serif}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-smoothing:antialiased;font-family:var(--f)}
+
+.shell{display:flex;flex-direction:column;width:100vw;height:100vh}
+
+/* Topbar */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:48px;background:var(--bg);border-bottom:1px solid var(--b0);flex-shrink:0;z-index:100}
+.tl{display:flex;align-items:center;gap:10px}
+.t-name{font-size:13px;font-weight:600;color:var(--text);letter-spacing:-0.02em}
+.t-sep{color:var(--t4);font-size:13px;font-weight:300}
+.t-sub{font-size:13px;font-weight:300;color:var(--t3)}
+.ctr{font-size:11px;font-weight:500;color:var(--t4);background:var(--s2);border:1px solid var(--b0);border-radius:20px;padding:3px 14px;letter-spacing:0.02em}
+.tr{display:flex;gap:8px}
+.btn{font-family:var(--f);font-size:12px;font-weight:500;padding:6px 16px;border-radius:8px;cursor:pointer;border:1px solid var(--b1);background:transparent;color:var(--t3);transition:all .15s}
+.btn:hover{background:var(--s2);color:var(--text)}
+.btn-p{background:var(--text);color:var(--bg);border-color:var(--text);font-weight:600}
+.btn-p:hover{background:#dedad4}
+
+/* Viewport */
+.viewport{flex:1;display:flex;align-items:center;justify-content:center;background:#000;overflow:hidden}
+
+/* Canvas */
+.canvas{width:1920px;height:1080px;position:relative;transform-origin:center center;background:var(--s1);overflow:hidden;flex-shrink:0}
+.slide{position:absolute;inset:0;display:none}
+.slide.on{display:flex}
+
+/* Accent bar */
+.ab{position:absolute;left:0;top:0;bottom:0;width:5px;z-index:5}
+.c-blue{background:var(--blue)}.c-red{background:var(--red)}.c-grn{background:var(--grn)}
+.c-amb{background:var(--amb)}.c-pur{background:var(--pur)}.c-none{background:transparent}
+
+/* Crumb */
+.crumb{position:absolute;top:56px;left:80px;font-size:18px;font-weight:500;color:var(--t4);z-index:10;letter-spacing:0.01em}
+
+/* Layouts */
+.l-full{width:100%;height:100%;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:120px 160px}
+.l-full-l{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;padding:140px 160px}
+.l-split{width:100%;height:100%;display:grid;grid-template-columns:1fr 1fr}
+.l-left{padding:80px 80px 80px 100px;display:flex;flex-direction:column;justify-content:center}
+.l-right{display:flex;align-items:center;justify-content:center;padding:80px 80px;border-left:1px solid var(--b0)}
+.l-grid{width:100%;height:100%;padding:120px 100px 80px;display:flex;flex-direction:column;justify-content:center}
+.l-sec{width:100%;height:100%;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;padding:120px 140px}
+
+/* Type hierarchy */
+.label{font-size:18px;font-weight:600;color:var(--t4);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:28px}
+.hero{font-size:100px;font-weight:800;color:var(--text);line-height:1.0;letter-spacing:-0.04em;margin-bottom:32px}
+.h1{font-size:72px;font-weight:800;color:var(--text);line-height:1.05;letter-spacing:-0.035em;margin-bottom:36px}
+.h2{font-size:56px;font-weight:700;color:var(--text);line-height:1.08;letter-spacing:-0.03em;margin-bottom:36px}
+.lead{font-size:28px;font-weight:400;color:var(--t2);line-height:1.6;letter-spacing:-0.01em}
+.body{font-size:24px;font-weight:400;color:var(--t2);line-height:1.65;letter-spacing:-0.005em}
+.small{font-size:20px;font-weight:400;color:var(--t3);line-height:1.6}
+
+/* Numbered list */
+.nlist{list-style:none;margin-top:8px;margin-bottom:0}
+.nlist li{display:flex;gap:20px;align-items:baseline;padding:12px 0}
+.nlist li:last-child{}
+.nn{font-size:16px;font-weight:700;color:var(--t4);min-width:32px;flex-shrink:0;letter-spacing:0.02em}
+.nt{font-size:24px;font-weight:400;color:var(--t2);line-height:1.5;letter-spacing:-0.005em}
+.nt b{color:var(--text);font-weight:600}
+
+/* Quote */
+.iq{padding:24px 0 0;margin-top:28px;font-size:22px;font-weight:300;color:var(--t3);line-height:1.7;font-style:italic}
+.pq{font-size:36px;font-weight:300;color:var(--t2);line-height:1.5;letter-spacing:-0.02em}
+.pq-attr{font-size:18px;font-weight:500;color:var(--t4);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:32px}
+
+/* Cards */
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ci{background:var(--s2);border:1px solid var(--b0);border-radius:16px;padding:36px}
+.ci-n{font-size:14px;font-weight:700;color:var(--t4);margin-bottom:14px;letter-spacing:0.06em;text-transform:uppercase}
+.ci-t{font-size:26px;font-weight:700;color:var(--text);margin-bottom:10px;letter-spacing:-0.02em}
+.ci-b{font-size:18px;font-weight:400;color:var(--t2);line-height:1.6}
+
+/* Org cards */
+.oc{background:var(--s2);border:1px solid var(--b0);border-radius:16px;padding:28px 36px;margin-bottom:14px}
+.oc-l{font-size:13px;font-weight:700;color:var(--t4);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px}
+.oc-i{font-size:22px;font-weight:400;color:var(--t2);padding:5px 0}
+.oc-i.me{color:var(--text);font-weight:700}
+
+/* Leadership 3-col */
+.lcol{display:grid;grid-template-columns:1fr 1fr 1fr;gap:60px;margin-top:8px}
+.lcol-item{padding:28px 0;border-top:2px solid var(--b1)}
+.lcol-t{font-size:26px;font-weight:700;color:var(--text);letter-spacing:-0.02em;margin-bottom:12px}
+.lcol-b{font-size:20px;font-weight:400;color:var(--t2);line-height:1.65}
+
+
+/* Impact cards */
+.impact-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.impact-card{background:var(--s2);border:1px solid var(--b0);border-radius:16px;padding:32px 36px;display:flex;flex-direction:column;gap:12px}
+.impact-num{font-size:36px;font-weight:700;color:var(--text);letter-spacing:-0.03em;line-height:1}
+.impact-desc{font-size:18px;font-weight:400;color:var(--t3);line-height:1.5}
+
+/* Featured quote */
+.quote-feature{display:flex;gap:0;background:var(--s2);border:1px solid var(--b0);border-radius:16px;overflow:hidden;margin-bottom:32px}
+.quote-accent{width:4px;background:var(--amb);flex-shrink:0}
+.quote-content{padding:36px 48px}
+.quote-text{font-size:32px;font-weight:300;color:var(--text);line-height:1.45;letter-spacing:-0.02em;margin-bottom:16px}
+.quote-attr{font-size:16px;font-weight:500;color:var(--t4);text-transform:uppercase;letter-spacing:0.08em}
+
+/* Turn cards */
+.turn-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.turn-card{background:var(--s2);border:1px solid var(--b0);border-radius:16px;padding:32px;display:flex;flex-direction:column}
+.turn-label{font-size:12px;font-weight:700;color:var(--t4);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px}
+.turn-label-found{color:var(--amb)}
+.turn-assumed{font-size:20px;font-weight:400;color:var(--t3);line-height:1.5;flex:1}
+.turn-divider{width:100%;height:1px;background:var(--b0);margin:24px 0}
+.turn-found{font-size:20px;font-weight:600;color:var(--text);line-height:1.5;flex:1}
+
+/* Metrics */
+.mblock{padding:24px 0;border-top:1px solid var(--b0);display:flex;justify-content:space-between;align-items:baseline;gap:40px}
+.mblock:last-of-type{border-bottom:1px solid var(--b0)}
+.m-num{font-size:60px;font-weight:800;color:var(--text);letter-spacing:-0.04em;line-height:1}
+.m-label{font-size:22px;font-weight:400;color:var(--t2);text-align:left;max-width:480px;line-height:1.5}
+
+/* Big insight */
+.big{margin-top:48px;padding-top:40px;border-top:1px solid var(--b0)}
+.big p{font-size:44px;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1.2}
+
+/* Image zone */
+.iz{width:100%;height:100%;border:1px dashed var(--b1);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;background:var(--s2)}
+.iz:hover{border-color:var(--b2);background:var(--s3)}
+.iz.filled{border-style:solid;border-color:var(--b0)}
+.iz img{width:100%;height:100%;object-fit:contain;border-radius:12px}
+.iz-icon{font-size:32px;opacity:0.15;pointer-events:none}
+.iz-hint{font-size:18px;font-weight:500;color:var(--t4);text-align:center;pointer-events:none;line-height:1.6;letter-spacing:0.04em;text-transform:uppercase}
+.iz input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.iz-ov{position:absolute;inset:0;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;border-radius:12px}
+.iz.filled:hover .iz-ov{opacity:1}
+.iz-ov span{font-size:22px;font-weight:500;color:var(--text)}
+.iz-grid{width:100%;height:100%;display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:20px}
+
+/* Cover mesh */
+.mesh{position:absolute;inset:0;background:radial-gradient(ellipse at 80% 40%,rgba(74,143,214,0.07) 0%,transparent 55%),radial-gradient(ellipse at 20% 80%,rgba(138,114,216,0.05) 0%,transparent 50%);pointer-events:none}
+.hero-rule{width:64px;height:3px;background:var(--blue);margin:36px 0}
+
+/* Pills */
+.pills{display:flex;flex-wrap:nowrap;gap:10px;margin-top:40px;overflow:hidden}
+.pill{font-size:18px;font-weight:500;color:var(--t3);background:var(--s2);border:1px solid var(--b0);border-radius:40px;padding:6px 20px;white-space:nowrap}
+
+/* Section divider */
+.sec-num{font-size:240px;font-weight:800;color:rgba(255,255,255,0.03);line-height:1;position:absolute;right:120px;bottom:80px;letter-spacing:-0.06em}
+.sec-label{font-size:18px;font-weight:700;color:var(--t4);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:20px}
+.sec-title{font-size:100px;font-weight:800;color:var(--text);letter-spacing:-0.04em;line-height:1.0}
+.sec-sub{font-size:28px;font-weight:400;color:var(--t2);margin-top:28px;line-height:1.6;max-width:800px}
+
+/* Annotation */
+.ann{font-size:18px;font-weight:600;color:var(--grn);margin-top:24px;text-transform:uppercase;letter-spacing:0.06em}
+
+/* Process steps */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:32px}
+.step{border-top:3px solid var(--b0);padding-top:20px;padding-right:40px}
+.step.act{border-top-color:var(--grn)}
+.step-n{font-size:14px;font-weight:700;color:var(--t4);margin-bottom:12px;letter-spacing:0.06em;text-transform:uppercase}
+.step-t{font-size:24px;font-weight:700;color:var(--text);margin-bottom:8px;letter-spacing:-0.01em}
+.step-b{font-size:14px;font-weight:400;color:var(--t3);line-height:1.5}
+
+/* Bottombar */
+.bottombar{display:flex;align-items:center;justify-content:center;gap:20px;padding:12px 24px;background:var(--bg);border-top:1px solid var(--b0);flex-shrink:0;z-index:100}
+.nbtn{width:32px;height:32px;border-radius:50%;border:1px solid var(--b0);background:transparent;color:var(--t3);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.nbtn:hover:not(:disabled){background:var(--s2);color:var(--text);border-color:var(--b1)}
+.nbtn:disabled{opacity:0.2;cursor:default}
+.dots{display:flex;gap:6px;align-items:center}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--t4);cursor:pointer;transition:all .2s}
+.dot.on{background:var(--text);width:18px;border-radius:3px}
+.dot-gap{width:12px}
+
+/* Masonry grid */
+.masonry{display:flex;gap:12px;width:100%;height:100%}
+.masonry-col{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0}
+.masonry-item{border-radius:12px;overflow:hidden;background:var(--s2);border:1px solid var(--b1);box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+.masonry-item img{width:100%;height:100%;object-fit:cover;object-position:top left;display:block}
+.masonry-tall{flex:1}
+.masonry-mid{flex:1.4}
+.masonry-sm{flex:0.6}
+
+/* Carousel dots */
+.cdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.2);transition:all 0.4s cubic-bezier(0.4,0,0.2,1)}
+.cdot-on{background:rgba(255,255,255,0.7);width:20px;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="shell">
+<div class="topbar">
+  <div class="tl"><span class="t-name">Nuwan</span><span class="t-sep">/</span><span class="t-sub">Design Portfolio</span></div>
+  <span class="ctr" id="ctr">01 / 17</span>
+  <div class="tr"><button class="btn" onclick="window.print()">Export</button><button class="btn btn-p" onclick="goFS()">Present ↗</button></div>
+</div>
+
+<div class="viewport" id="vp">
+<div class="canvas" id="canvas">
+
+<!-- 01 About -->
+<div class="slide on" data-n="1"><div class="ab c-blue"></div>
+<div class="l-split">
+<div class="l-left" style="justify-content:center;">
+  <h1 class="h2">Nuwan</h1>
+  <p class="body" style="margin-bottom:20px">I'm a product design leader with 10+ years working on complex platform products where design directly shapes adoption, revenue and strategic risk.</p>
+  <p class="body" style="margin-bottom:20px">I'm hands-on by default, comfortable in high-ambiguity environments, and most effective when design is treated as a business partner not a service function.</p>
+  <p class="body">Host of <span style="color:var(--text);font-weight:700">Designing Up</span>, a podcast on design leadership and AI in product teams.</p>
+  <div class="pills">
+    <span class="pill">B2B SaaS</span>
+    <span class="pill">AI-native tools</span>
+    <span class="pill">Design systems</span>
+    <span class="pill">0→1 builds</span>
+    <span class="pill">Platform products</span>
+  </div>
+</div>
+<div class="l-right" style="flex-direction:column;gap:14px;align-items:stretch;">
+  <div class="oc"><div class="oc-l">Currently</div><div class="oc-i me">Lead / Staff Product Designer</div><div class="oc-i">Berlin, Germany</div></div>
+  <div class="oc"><div class="oc-l">Background</div><div class="oc-i">In-house + Agency</div><div class="oc-i">B2B SaaS + AI products</div><div class="oc-i">Designing Up podcast</div></div>
+  <div class="oc"><div class="oc-l">Outside work</div><div class="oc-i">I run half marathons</div><div class="oc-i">Addicted to Hyrox races</div></div>
+</div>
+</div></div>
+
+<!-- 02 Leadership -->
+<div class="slide" data-n="2"><div class="ab c-pur"></div>
+<div class="l-grid" style="padding-top:60px;">
+  <h2 class="h2">How I operate</h2>
+  <div class="lcol">
+    <div class="lcol-item"><div class="lcol-t">Set direction under ambiguity</div><div class="lcol-b">Defined clear principles and decision criteria to move teams forward before solutions were locked in</div></div>
+    <div class="lcol-item"><div class="lcol-t">Positioned design as a product partner</div><div class="lcol-b">Bridging executives, engineers and ICs around customer-centred decisions. A strategic voice, not a service function</div></div>
+    <div class="lcol-item"><div class="lcol-t">Scaled impact through people</div><div class="lcol-b">Established career frameworks and growth plans enabling clearer expectations, stronger ownership and team growth</div></div>
+  </div>
+  <p class="small" style="margin-top:48px">Led the Product Design function at Spryker under the CPO</p>
+</div></div>
+
+<!-- 03 DSR Project Cover -->
+<div class="slide" data-n="3"><div class="ab c-blue"></div>
+<div class="l-split">
+  <div class="l-left" style="justify-content:center;gap:0;">
+    <div style="font-size:80px;font-weight:800;color:rgba(255,255,255,0.08);line-height:1;letter-spacing:-0.05em;margin-bottom:16px;">01</div>
+    <div style="font-size:20px;font-weight:700;color:var(--t4);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:28px;">Spryker</div>
+    <h2 style="font-size:72px;font-weight:800;color:var(--text);line-height:1.05;letter-spacing:-0.035em;margin-bottom:36px;">De-risking a €2M<br>platform bet</h2>
+    <p style="font-size:24px;font-weight:400;color:var(--t2);line-height:1.65;letter-spacing:-0.005em;max-width:640px;margin-bottom:52px;">The company was under pressure to invest in a Digital Sales Room, driven by analyst hype, internal revenue narratives, and interest from a marquee enterprise customer — before there was evidence customers were ready to adopt it.</p>
+  </div>
+  <div class="l-right" style="padding:40px 40px 40px 30px;">
+    <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+      <div style="background:#1e1e24;border-radius:16px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,0.6);width:100%;max-width:920px;display:flex;flex-direction:column;">
+        <div style="height:52px;background:#28282f;display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <div style="display:flex;gap:7px;"><div style="width:12px;height:12px;border-radius:50%;background:#ff5f57"></div><div style="width:12px;height:12px;border-radius:50%;background:#febc2e"></div><div style="width:12px;height:12px;border-radius:50%;background:#28c840"></div></div>
+          <div style="flex:1;display:flex;justify-content:center;"><div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:4px 28px;font-size:11px;color:var(--t4)">app.spryker.com</div></div>
+        </div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;min-height:500px;overflow:hidden;">
+          <img src="DSR/DSR1.png" alt="DSR Product" style="width:100%;height:100%;object-fit:cover;object-position:top left;">
+        </div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- 04 My Role -->
+<div class="slide" data-n="4"><div class="ab c-blue"></div><div class="crumb">My role</div>
+<div class="l-split">
+<div class="l-left">
+  <h2 class="h2">My role</h2>
+  <ul class="nlist">
+    <li><span class="nn">01</span><span class="nt">End-to-end design ownership, from first principles to CEO recommendation</span></li>
+    <li><span class="nn">02</span><span class="nt">Reported to CPO, managed senior leadership as stakeholders</span></li>
+    <li><span class="nn">03</span><span class="nt">Only designer in the room. Full autonomy, full accountability</span></li>
+    <li><span class="nn">04</span><span class="nt">Collaborated with infra PM to validate cost and feasibility</span></li>
+  </ul>
+</div>
+<div class="l-right" style="flex-direction:column;gap:14px;align-items:stretch;">
+  <div class="oc"><div class="oc-l">My team</div><div class="oc-i">Infra PM</div><div class="oc-i me">Lead Designer</div></div>
+  <div class="oc"><div class="oc-l">Stakeholders</div><div class="oc-i">CPO</div><div class="oc-i">VP of Product</div><div class="oc-i">C-suite</div><div class="oc-i">Engineering</div><div class="oc-i">GTM leads</div></div>
+</div>
+</div></div>
+
+<!-- 05 The Pressure -->
+<div class="slide" data-n="5"><div class="ab c-red"></div><div class="crumb">The pressure</div>
+<div class="l-grid">
+  <h2 class="h2">The problems</h2>
+  <div class="cgrid">
+    <div class="ci"><div class="ci-n">01</div><div class="ci-t">Investor pressure</div><div class="ci-b">New R&D investment needed. The market expected a move</div></div>
+    <div class="ci"><div class="ci-n">02</div><div class="ci-t">Analyst hype</div><div class="ci-b">Every B2B analyst was writing about digital sales rooms. FOMO was real</div></div>
+    <div class="ci"><div class="ci-n">03</div><div class="ci-t">Sales enthusiasm</div><div class="ci-b">Sales teams were pushing hard. They believed this was the edge they needed</div></div>
+    <div class="ci"><div class="ci-n">04</div><div class="ci-t">Lighthouse customers</div><div class="ci-b">Our best customers were interested. Some were aggressively asking us to build it</div></div>
+  </div>
+  <p class="iq">Everyone had a reason to build. No one had a reason to pause. That was the problem.</p>
+</div></div>
+
+<!-- 06 Assumptions -->
+<div class="slide" data-n="6"><div class="ab c-red"></div><div class="crumb">Starting assumptions</div>
+<div class="l-split">
+<div class="l-left">
+  <h2 class="h2">Starting assumptions</h2>
+  <ul class="nlist">
+    <li><span class="nn">01</span><span class="nt">"Enterprise complexity requires a shared digital workspace"</span></li>
+    <li><span class="nn">02</span><span class="nt">"Lighthouse customer interest signals broader market demand"</span></li>
+    <li><span class="nn">03</span><span class="nt">"A Digital Sales Room will shorten cycles and differentiate us"</span></li>
+  </ul>
+  <p class="iq">These felt true. Several times, I almost convinced myself they were.</p>
+</div>
+<div class="l-right" style="flex-direction:column;align-items:center;justify-content:center;padding:40px;border-left:1px solid var(--b0);background:transparent;">
+  <div class="masonry" style="max-height:80%;">
+    <div class="masonry-col">
+      <div class="masonry-item masonry-tall"><img src="DSR/Hypoth.png" alt="Hypothesis"></div>
+    </div>
+    <div class="masonry-col">
+      <div class="masonry-item masonry-mid"><img src="DSR/Research.png" alt="Research"></div>
+      <div class="masonry-item masonry-sm"><img src="DSR/Call.png" alt="Customer calls"></div>
+    </div>
+  </div>
+</div>
+</div></div>
+
+<!-- 07 Discovery -->
+<div class="slide" data-n="7"><div class="ab c-grn"></div><div class="crumb">Discovery</div>
+<div class="l-split">
+<div class="l-left">
+  <h2 class="h2">Discovery and validation</h2>
+  <ul class="nlist">
+    <li><span class="nn">01</span><span class="nt">Synthesised all internal and external research and market data</span></li>
+    <li><span class="nn">02</span><span class="nt">Profiled against ICP data to find genuine product-market matches</span></li>
+    <li><span class="nn">03</span><span class="nt">Structured customer discovery calls across multiple verticals</span></li>
+    <li><span class="nn">04</span><span class="nt">Mapped seller and buyer journeys separately. They were not the same problem</span></li>
+    <li><span class="nn">05</span><span class="nt">Daily synthesis shared with CPO. Full transparency throughout</span></li>
+  </ul>
+  <p class="iq">Buyers were consistent. Sellers were chaos. Every customer ran different systems, cultures, processes.</p>
+</div>
+<div class="l-right" style="overflow:hidden;padding:80px 60px;position:relative;border-left:1px solid var(--b0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+  <div style="background:#1e1e24;border-radius:16px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,0.6);width:100%;display:flex;flex-direction:column;">
+    <div style="height:52px;background:#28282f;display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.06);">
+      <div style="display:flex;gap:7px;"><div style="width:12px;height:12px;border-radius:50%;background:#ff5f57"></div><div style="width:12px;height:12px;border-radius:50%;background:#febc2e"></div><div style="width:12px;height:12px;border-radius:50%;background:#28c840"></div></div>
+      <div style="flex:1;display:flex;justify-content:center;"><div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:4px 28px;font-size:11px;color:var(--t4)">app.spryker.com</div></div>
+    </div>
+    <div class="slide-carousel" style="position:relative;width:100%;aspect-ratio:1.3;overflow:hidden;background:#fff;">
+      <img src="DSR/1.png" class="carousel-img" data-ci="0" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;">
+      <img src="DSR/2.png" class="carousel-img" data-ci="1" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;opacity:0;transform:translateX(100%);">
+      <img src="DSR/3.png" class="carousel-img" data-ci="2" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;opacity:0;transform:translateX(100%);">
+    </div>
+  </div>
+  <!-- Progress dots -->
+  <div style="display:flex;gap:8px;">
+    <div class="cdot cdot-on" data-di="0"></div>
+    <div class="cdot" data-di="1"></div>
+    <div class="cdot" data-di="2"></div>
+  </div>
+</div>
+</div></div>
+
+<!-- 08 What we built -->
+<div class="slide" data-n="8"><div class="ab c-grn"></div><div class="crumb">The work</div>
+<div class="l-split">
+<div class="l-left">
+  <h2 class="h2">What we built and tested</h2>
+  <ul class="nlist">
+    <li><span class="nn">01</span><span class="nt">Visual language: enterprise-grade trust and compliance, designed to feel native to the world our ICP operates in</span></li>
+    <li><span class="nn">02</span><span class="nt">Started lo-fi then moved to hi-fi only where fidelity changed what we could learn</span></li>
+    <li><span class="nn">03</span><span class="nt">Tested key interactions: Buyer experience, multi-layered document management & internal price creations</span></li>
+    <li><span class="nn">04</span><span class="nt">Pressure tested with various enterprise ICP verticals</span></li>
+  </ul>
+  <p class="iq">When I stripped it back to the essential interaction and customers still hesitated. That told me more than any feature feedback ever could.</p>
+</div>
+<div class="l-right" style="overflow:hidden;padding:80px 60px;position:relative;border-left:1px solid var(--b0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+  <div style="background:#1e1e24;border-radius:16px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,0.6);width:100%;display:flex;flex-direction:column;">
+    <div style="height:52px;background:#28282f;display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.06);">
+      <div style="display:flex;gap:7px;"><div style="width:12px;height:12px;border-radius:50%;background:#ff5f57"></div><div style="width:12px;height:12px;border-radius:50%;background:#febc2e"></div><div style="width:12px;height:12px;border-radius:50%;background:#28c840"></div></div>
+      <div style="flex:1;display:flex;justify-content:center;"><div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:4px 28px;font-size:11px;color:var(--t4)">app.spryker.com</div></div>
+    </div>
+    <div class="slide-carousel slide-carousel-8" style="position:relative;width:100%;aspect-ratio:1.3;overflow:hidden;background:#fff;">
+      <img src="DSR/DSR1.png" class="carousel-img-8" data-ci="0" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;">
+      <img src="DSR/DSR2.png" class="carousel-img-8" data-ci="1" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;opacity:0;transform:translateX(100%);">
+      <img src="DSR/DSR3.png" class="carousel-img-8" data-ci="2" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;opacity:0;transform:translateX(100%);">
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <div class="cdot cdot-on" data-di8="0"></div>
+    <div class="cdot" data-di8="1"></div>
+    <div class="cdot" data-di8="2"></div>
+  </div>
+</div>
+</div></div>
+
+<!-- 09 The Turn -->
+<div class="slide" data-n="9"><div class="ab c-amb"></div><div class="crumb">The turn</div>
+<div class="l-grid" style="justify-content:center;gap:0;">
+  <h2 class="h2">The assumptions were wrong</h2>
+  <div class="turn-cards">
+    <div class="turn-card">
+      <div class="turn-label">We assumed</div>
+      <p class="turn-assumed">Enterprise complexity requires a shared digital workspace</p>
+      <div class="turn-divider"></div>
+      <div class="turn-label turn-label-found">What we found</div>
+      <p class="turn-found">Adoption required transforming entrenched sales cultures overnight</p>
+    </div>
+    <div class="turn-card">
+      <div class="turn-label">We assumed</div>
+      <p class="turn-assumed">Lighthouse customer interest signals broader market demand</p>
+      <div class="turn-divider"></div>
+      <div class="turn-label turn-label-found">What we found</div>
+      <p class="turn-found">One customer wanted a bespoke build. That is a consulting project, not a product</p>
+    </div>
+    <div class="turn-card">
+      <div class="turn-label">We assumed</div>
+      <p class="turn-assumed">A Digital Sales Room will shorten sales cycles</p>
+      <div class="turn-divider"></div>
+      <div class="turn-label turn-label-found">What we found</div>
+      <p class="turn-found">Digital sales room required a massive org transformation in reality</p>
+    </div>
+  </div>
+  <p class="iq">Interest is not readiness. Enthusiasm is not adoption.</p>
+</div></div>
+
+<!-- 10 Recommendation -->
+<div class="slide" data-n="10"><div class="ab c-amb"></div><div class="crumb">The recommendation</div>
+<div class="l-grid" style="justify-content:center;gap:0;">
+  <h2 class="h2">The recommendation</h2>
+  <ul class="nlist">
+    <li><span class="nn">01</span><span class="nt">Our ICP is not ready. Building ahead of readiness compounds the cost</span></li>
+    <li><span class="nn">02</span><span class="nt">Framed as business risk anchored to comparable project scope north of €2M</span></li>
+    <li><span class="nn">03</span><span class="nt">Collaborated with the team to model integration, resource and roadmap costs</span></li>
+    <li><span class="nn">04</span><span class="nt">CPO saw everything in real time. Recommendation landed without resistance</span></li>
+  </ul>
+  <p class="quote-text" style="margin-top:28px;">"Getting a tool like this adopted by our sales team off the bat will be tricky."</p>
+  <p class="quote-attr">— Truck fleet management customer</p>
+</div></div>
+
+<!-- 11 DSR Outcome -->
+<div class="slide" data-n="11"><div class="ab c-pur"></div><div class="crumb">Outcome</div>
+<div class="l-grid" style="justify-content:center;gap:0;">
+  <h2 class="h2">Impact</h2>
+  <div class="impact-cards">
+    <div class="impact-card">
+      <div class="impact-num">~€2M</div>
+      <div class="impact-desc">Saved in avoided R&D investment</div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-num">8 mo</div>
+      <div class="impact-desc">Of roadmap redirected to foundational capabilities</div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-num">Self-service</div>
+      <div class="impact-desc">Shipped and validated — the redirect was the right bet</div>
+    </div>
+  </div>
+  <p class="iq">The initiative that replaced the Sales Room, self-service improvements shipped and performed well. We also emerged from the process significantly closer to our ICP</p>
+</div></div>
+
+<!-- 12 DS Divider -->
+<div class="slide" data-n="12"><div class="ab c-grn"></div>
+<div class="l-split">
+  <div class="l-left" style="justify-content:center;gap:0;">
+    <div style="font-size:80px;font-weight:800;color:rgba(255,255,255,0.08);line-height:1;letter-spacing:-0.05em;margin-bottom:16px;">02</div>
+    <div style="font-size:20px;font-weight:700;color:var(--t4);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:28px;">Design System</div>
+    <h2 style="font-size:56px;font-weight:800;color:var(--text);line-height:1.1;letter-spacing:-0.035em;margin-bottom:36px;">One designer. Claude Code.<br>A better loop</h2>
+    <p style="font-size:24px;font-weight:400;color:var(--t2);line-height:1.65;letter-spacing:-0.005em;max-width:640px;margin-bottom:52px;">How I used 20% of my time and AI to fix what no one had time to fix, and created organisational pull in the process.</p>
+  </div>
+  <div class="l-right" style="padding:40px 40px 40px 30px;">
+    <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+      <div style="background:#1e1e24;border-radius:16px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,0.6);width:100%;max-width:920px;display:flex;flex-direction:column;">
+        <div style="height:52px;background:#28282f;display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <div style="display:flex;gap:7px;"><div style="width:12px;height:12px;border-radius:50%;background:#ff5f57"></div><div style="width:12px;height:12px;border-radius:50%;background:#febc2e"></div><div style="width:12px;height:12px;border-radius:50%;background:#28c840"></div></div>
+          <div style="flex:1;display:flex;justify-content:center;"><div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:4px 28px;font-size:11px;color:var(--t4)">design-system.vercel.app</div></div>
+        </div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;min-height:500px;overflow:hidden;">
+          <img src="DS/DS_cover.png" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- 14 DS Problem -->
+<!-- DS My Role -->
+<div class="slide" data-n="13"><div class="ab c-grn"></div><div class="crumb">My role</div>
+<div class="l-split">
+<div class="l-left">
+  <h2 class="h2">My role</h2>
+  <ul class="nlist">
+    <li><span class="nn">01</span><span class="nt">Self-initiated. Pitched to my manager and got sales and demo team backing</span></li>
+    <li><span class="nn">02</span><span class="nt">20% of my time, one FE alongside me, Claude Code as the multiplier</span></li>
+    <li><span class="nn">03</span><span class="nt">Three goals: elevate craft, increase prospect satisfaction, enable the team to ship faster without breaking</span></li>
+  </ul>
+</div>
+<div class="l-right" style="flex-direction:column;gap:14px;align-items:stretch;">
+  <div class="oc"><div class="oc-l">Team</div><div class="oc-i me">Designer</div><div class="oc-i">Claude Code</div><div class="oc-i">FE Engineer</div></div>
+  <div class="oc"><div class="oc-l">Stakeholders</div><div class="oc-i">VP Product</div><div class="oc-i">SVP Engineering</div><div class="oc-i">GTM</div><div class="oc-i">Demo experience team</div></div>
+  <div class="oc"><div class="oc-l">Constraint</div><div class="oc-i">Be ambitious. Don't break a live shop</div></div>
+</div>
+</div></div>
+
+<div class="slide" data-n="14"><div class="ab c-grn"></div><div class="crumb">The problem</div>
+<div class="l-split">
+<div class="l-left">
+  <h2 class="h2">The problem</h2>
+  <p class="body" style="margin-bottom:20px">This wasn't just a craft issue. It was a structural bottleneck slowing down the sales team's ability to show prospects what the platform could do, at the exact moment it mattered most.</p>
+</div>
+<div class="l-right" style="display:flex;align-items:center;justify-content:center;padding:40px 40px 40px 30px;">
+  <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:520px;">
+    <div style="border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);box-shadow:0 4px 24px rgba(0,0,0,0.4);">
+      <img src="DS/DS1.png" style="width:100%;display:block;object-fit:contain;">
+    </div>
+    <div style="border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);box-shadow:0 4px 24px rgba(0,0,0,0.4);">
+      <img src="DS/DS2.png" style="width:100%;display:block;object-fit:contain;">
+    </div>
+    <div style="border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);box-shadow:0 4px 24px rgba(0,0,0,0.4);">
+      <img src="DS/DS3.png" style="width:100%;display:block;object-fit:contain;">
+    </div>
+  </div>
+</div>
+</div></div>
+
+<!-- DS Approach & Conviction -->
+<div class="slide" data-n="15"><div class="ab c-grn"></div><div class="crumb">The approach</div>
+<div class="l-split">
+<div class="l-left">
+  <h2 class="h2">Conviction</h2>
+  <p class="body" style="margin-bottom:24px">I had already started exploring Claude Code workflows. I knew that with the right system, custom skills, a Figma MCP pipeline, and a clear token foundation. I could operate as a full design-engineering team, not just a designer handing specs over a wall.</p>
+  <p class="iq">The pitch: 20% time, 1 FE and Claude Code as a genuine production tool.</p>
+</div>
+<div class="l-right" style="display:flex;align-items:center;justify-content:center;padding:40px 40px 40px 30px;">
+  <div style="border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);box-shadow:0 8px 40px rgba(0,0,0,0.5);width:100%;max-width:700px;">
+    <img src="DS/Moodboard.png" style="width:100%;display:block;object-fit:contain;">
+  </div>
+</div>
+</div></div>
+
+<!-- DS AI-Native Workflow -->
+<div class="slide" data-n="16"><div class="ab c-grn"></div><div class="crumb">AI-Native workflow</div>
+<div class="l-split">
+<div class="l-left">
+  <h2 class="h2">Operate like a full team</h2>
+  <ul class="nlist">
+    <li><span class="nn">01</span><span class="nt">Encoded design principles and token structure as skills</span></li>
+    <li><span class="nn">02</span><span class="nt">Generates component variants directly in Figma, grounded in the token system and visual direction</span></li>
+    <li><span class="nn">03</span><span class="nt">Reviews every component against design principles and token compliance</span></li>
+    <li><span class="nn">04</span><span class="nt">Cross-checks compatibility with the live demo storefront</span></li>
+  </ul>
+</div>
+<div class="l-right" style="display:flex;align-items:center;justify-content:center;padding:60px 40px 60px 30px;">
+  <div style="border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);box-shadow:0 8px 40px rgba(0,0,0,0.5);width:100%;max-width:700px;">
+    <img src="DS/Tokens.png" style="width:100%;display:block;object-fit:contain;">
+  </div>
+</div>
+</div></div>
+
+<!-- 17 DS How I Built It -->
+<div class="slide" data-n="17"><div class="ab c-grn"></div><div class="crumb">The work</div>
+<div class="l-split">
+<div class="l-left">
+  <h2 class="h2">How I built it</h2>
+  <div class="steps">
+    <div class="step act"><div class="step-n">01</div><div class="step-t">Moodboard</div><div class="step-b">Visual direction and stakeholder alignment before a single component</div></div>
+    <div class="step act"><div class="step-n">02</div><div class="step-t">Foundations</div><div class="step-b">Design principles, tokens, colour and type system</div></div>
+    <div class="step act"><div class="step-n">03</div><div class="step-t">Components</div><div class="step-b">Built directly into codebase using Claude Code</div></div>
+    <div class="step"><div class="step-n">04</div><div class="step-t">Docs site</div><div class="step-b">Built simultaneously, not after</div></div>
+  </div>
+  <p class="iq" style="margin-top:32px">The hardest decision was restraint. Every component had to feel like a step forward without breaking a live shop that sales depend on daily.</p>
+</div>
+<div class="l-right" style="overflow:hidden;padding:80px 60px;position:relative;border-left:1px solid var(--b0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+  <div style="background:#1e1e24;border-radius:16px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,0.6);width:100%;display:flex;flex-direction:column;">
+    <div style="height:52px;background:#28282f;display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.06);">
+      <div style="display:flex;gap:7px;"><div style="width:12px;height:12px;border-radius:50%;background:#ff5f57"></div><div style="width:12px;height:12px;border-radius:50%;background:#febc2e"></div><div style="width:12px;height:12px;border-radius:50%;background:#28c840"></div></div>
+      <div style="flex:1;display:flex;justify-content:center;"><div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:4px 28px;font-size:11px;color:var(--t4)">design-system.vercel.app</div></div>
+    </div>
+    <div class="slide-carousel slide-carousel-17" style="position:relative;width:100%;aspect-ratio:1.3;overflow:hidden;background:#1a1a2e;">
+      <img src="DS/Tab.png" class="carousel-img-17" data-ci="0" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#1a1a2e;">
+      <img src="DS/Button.png" class="carousel-img-17" data-ci="1" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#1a1a2e;opacity:0;transform:translateX(100%);">
+      <img src="DS/Radio.png" class="carousel-img-17" data-ci="2" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#1a1a2e;opacity:0;transform:translateX(100%);">
+      <img src="DS/Cards.png" class="carousel-img-17" data-ci="3" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#1a1a2e;opacity:0;transform:translateX(100%);">
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <div class="cdot cdot-on" data-di17="0"></div>
+    <div class="cdot" data-di17="1"></div>
+    <div class="cdot" data-di17="2"></div>
+    <div class="cdot" data-di17="3"></div>
+  </div>
+</div>
+</div></div>
+
+<!-- 18 DS Outcome -->
+<div class="slide" data-n="18"><div class="ab c-grn"></div><div class="crumb">Outcome</div>
+<div class="l-full" style="justify-content:center;align-items:flex-start;">
+  <h2 class="h2" style="margin-bottom:48px;">Outcome</h2>
+  <div style="display:flex;gap:24px;width:100%;max-width:1600px;margin-bottom:48px;">
+    <div class="impact-card" style="flex:1;">
+      <div class="impact-num">700+</div>
+      <div class="impact-desc">Component variants built</div>
+    </div>
+    <div class="impact-card" style="flex:1;">
+      <div class="impact-num">70%</div>
+      <div class="impact-desc">Shop coverage complete</div>
+    </div>
+    <div class="impact-card" style="flex:1;">
+      <div class="impact-num">Sales pull</div>
+      <div class="impact-desc">Sales started pushing to accelerate the work before it was finished, a leading indicator that the quality shift was visible and valued</div>
+    </div>
+  </div>
+  <p class="iq">I had to restrain myself yet be ambitious. Every component had to slot into the existing shop, not replace it</p>
+</div></div>
+
+<!-- 19 Closing -->
+<div class="slide" data-n="19"><div class="ab c-pur"></div>
+<!-- Subtle radial glow -->
+<div style="position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:1200px;height:600px;background:radial-gradient(ellipse at center,rgba(138,114,216,0.06) 0%,transparent 70%);pointer-events:none;z-index:0;"></div>
+<div style="width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 160px;position:relative;z-index:1;">
+  <h2 style="font-size:52px;font-weight:800;color:var(--text);line-height:1.12;letter-spacing:-0.035em;margin-bottom:56px;">Same instinct. Different direction</h2>
+
+  <div style="display:flex;gap:24px;margin-bottom:52px;">
+    <!-- Left: Case 01 -->
+    <div style="flex:1;background:var(--s2);border:1px solid var(--b0);border-radius:16px;padding:36px 40px;">
+      <div style="font-size:11px;font-weight:600;color:var(--t4);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;">Case 01 — Digital Sales Room</div>
+      <div style="font-size:32px;font-weight:700;color:var(--text);line-height:1.15;letter-spacing:-0.02em;margin-bottom:16px;">Said no under pressure</div>
+      <div style="font-size:14px;font-weight:400;color:var(--t3);line-height:1.6;">Turned organisational momentum into a rigorous recommendation to stop — backed by evidence, delivered with conviction, and validated by what shipped instead</div>
+    </div>
+
+    <!-- Right: Case 02 -->
+    <div style="flex:1;background:var(--s2);border:1px solid var(--b0);border-radius:16px;padding:36px 40px;">
+      <div style="font-size:11px;font-weight:600;color:var(--t4);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;">Case 02 — Demo Design System</div>
+      <div style="font-size:32px;font-weight:700;color:var(--text);line-height:1.15;letter-spacing:-0.02em;margin-bottom:16px;">Said yes to myself</div>
+      <div style="font-size:14px;font-weight:400;color:var(--t3);line-height:1.6;">Self-initiated, self-funded at 20% time, and executed with AI as a genuine force multiplier — delivering infrastructure the whole team can now build on</div>
+    </div>
+  </div>
+
+  <!-- Bottom traits -->
+  <div style="display:flex;gap:48px;margin-bottom:40px;">
+    <div style="flex:1;display:flex;align-items:flex-start;gap:14px;">
+      <span style="font-size:12px;font-weight:600;color:var(--t4);margin-top:2px;">01</span>
+      <span style="font-size:13px;color:var(--t3);line-height:1.5;"><span style="color:var(--t2);font-weight:600;">Strategic restraint</span> — say no with evidence when the organisation wants to say yes</span>
+    </div>
+    <div style="flex:1;display:flex;align-items:flex-start;gap:14px;">
+      <span style="font-size:12px;font-weight:600;color:var(--t4);margin-top:2px;">02</span>
+      <span style="font-size:13px;color:var(--t3);line-height:1.5;"><span style="color:var(--t2);font-weight:600;">Autonomous execution</span> — create leverage from limited resources using new tools and clear conviction</span>
+    </div>
+    <div style="flex:1;display:flex;align-items:flex-start;gap:14px;">
+      <span style="font-size:12px;font-weight:600;color:var(--t4);margin-top:2px;">03</span>
+      <span style="font-size:13px;color:var(--t3);line-height:1.5;"><span style="color:var(--t2);font-weight:600;">Organisational impact</span> — the work changed what the team did next, not just what it shipped</span>
+    </div>
+  </div>
+
+  <p style="font-size:16px;font-style:italic;font-weight:300;color:var(--t3);letter-spacing:-0.005em;">It's about knowing which problems are worth solving — and having the range to act on that judgment in either direction</p>
+</div></div>
+
+</div>
+</div>
+
+<div class="bottombar">
+  <button class="nbtn" id="prev" onclick="go(-1)" disabled>&#8592;</button>
+  <div class="dots" id="dots"></div>
+  <button class="nbtn" id="next" onclick="go(1)">&#8594;</button>
+</div>
+</div>
+
+<script>
+let cur=1,total=19;
+function scale(){
+  const vp=document.getElementById('vp');
+  const cv=document.getElementById('canvas');
+  const s=Math.min(vp.clientWidth/1920,vp.clientHeight/1080);
+  cv.style.transform='scale('+s+')';
+}
+function buildDots(){
+  const c=document.getElementById('dots');
+  for(let i=1;i<=total;i++){
+    if(i===3||i===12){const g=document.createElement('div');g.className='dot-gap';c.appendChild(g);}
+    const d=document.createElement('div');
+    d.className='dot'+(i===1?' on':'');
+    d.onclick=()=>goTo(i);
+    c.appendChild(d);
+  }
+}
+function goTo(n){
+  if(n<1||n>total)return;
+  document.querySelector('[data-n="'+cur+'"]').classList.remove('on');
+  cur=n;
+  document.querySelector('[data-n="'+cur+'"]').classList.add('on');
+  document.getElementById('ctr').textContent=String(cur).padStart(2,'0')+' / '+String(total).padStart(2,'0');
+  document.getElementById('prev').disabled=cur===1;
+  document.getElementById('next').disabled=cur===total;
+  document.querySelectorAll('.dot').forEach((d,i)=>d.className='dot'+(i+1===cur?' on':''));
+}
+function go(d){goTo(cur+d);}
+function handleImg(e,input){
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    const z=input.closest('.iz');
+    z.innerHTML='<img src="'+ev.target.result+'" alt=""><div class="iz-ov"><span>Change image</span></div><input type="file" accept="image/*" onchange="handleImg(event,this)">';
+    z.classList.add('filled');
+  };
+  r.readAsDataURL(file);
+}
+function goFS(){
+  document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();
+}
+window.addEventListener('resize',scale);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')go(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')go(-1);
+  if(e.key==='f'||e.key==='F')goFS();
+});
+buildDots();
+scale();
+
+// Slide 7 image carousel — smooth spring-like slide-up loop
+(function(){
+  let ci=0, timer=null, animating=false;
+  const spring={duration:700,easing:'cubic-bezier(0.16, 1, 0.3, 1)'}; // decelerate / spring-out
+  const exitSpring={duration:500,easing:'cubic-bezier(0.4, 0, 1, 1)'}; // accelerate out
+
+  function updateDots(){
+    const slide7=document.querySelector('[data-n="7"]');
+    if(!slide7) return;
+    slide7.querySelectorAll('.cdot').forEach((d,i)=>{
+      d.className=i===ci?'cdot cdot-on':'cdot';
+    });
+  }
+
+  function runCarousel(){
+    if(animating) return;
+    const slide7=document.querySelector('[data-n="7"]');
+    if(!slide7) return;
+    const imgs=slide7.querySelectorAll('.carousel-img');
+    if(imgs.length===0) return;
+    animating=true;
+
+    const prev=imgs[ci];
+    ci=(ci+1)%imgs.length;
+    const next=imgs[ci];
+
+    // Exit: current slides left and fades out
+    prev.animate([
+      {transform:'translateX(0)',opacity:1},
+      {transform:'translateX(-100%)',opacity:0}
+    ],exitSpring).onfinish=()=>{
+      prev.style.opacity='0';
+      prev.style.transform='translateX(100%)';
+    };
+
+    // Enter: next slides in from right
+    next.style.opacity='0';
+    next.style.transform='translateX(100%)';
+    requestAnimationFrame(()=>{
+      next.animate([
+        {transform:'translateX(100%)',opacity:0.3},
+        {transform:'translateX(0)',opacity:1}
+      ],spring).onfinish=()=>{
+        next.style.opacity='1';
+        next.style.transform='translateX(0)';
+        animating=false;
+      };
+    });
+
+    updateDots();
+  }
+
+  function resetCarousel(){
+    const slide7=document.querySelector('[data-n="7"]');
+    if(!slide7) return;
+    const imgs=slide7.querySelectorAll('.carousel-img');
+    imgs.forEach((img,i)=>{
+      img.style.opacity=i===0?'1':'0';
+      img.style.transform=i===0?'translateX(0)':'translateX(100%)';
+    });
+    ci=0;
+    animating=false;
+    updateDots();
+  }
+
+  function startCarousel(){
+    if(timer) return;
+    resetCarousel();
+    timer=setInterval(runCarousel,3500);
+  }
+  function stopCarousel(){
+    clearInterval(timer);
+    timer=null;
+  }
+
+  const origGoTo=goTo;
+  goTo=function(n){
+    origGoTo(n);
+    if(n===7){startCarousel();}else{stopCarousel();}
+  };
+  if(cur===7) startCarousel();
+})();
+
+// Slide 8 image carousel — same right-to-left
+(function(){
+  let ci=0, timer=null, animating=false;
+  const spring={duration:700,easing:'cubic-bezier(0.16, 1, 0.3, 1)'};
+  const exitSpring={duration:500,easing:'cubic-bezier(0.4, 0, 1, 1)'};
+
+  function updateDots(){
+    const s=document.querySelector('[data-n="8"]');
+    if(!s) return;
+    s.querySelectorAll('[data-di8]').forEach((d,i)=>{
+      d.className=i===ci?'cdot cdot-on':'cdot';
+    });
+  }
+
+  function runCarousel(){
+    if(animating) return;
+    const s=document.querySelector('[data-n="8"]');
+    if(!s) return;
+    const imgs=s.querySelectorAll('.carousel-img-8');
+    if(imgs.length===0) return;
+    animating=true;
+    const prev=imgs[ci];
+    ci=(ci+1)%imgs.length;
+    const next=imgs[ci];
+    prev.animate([
+      {transform:'translateX(0)',opacity:1},
+      {transform:'translateX(-100%)',opacity:0}
+    ],exitSpring).onfinish=()=>{
+      prev.style.opacity='0';
+      prev.style.transform='translateX(100%)';
+    };
+    next.style.opacity='0';
+    next.style.transform='translateX(100%)';
+    requestAnimationFrame(()=>{
+      next.animate([
+        {transform:'translateX(100%)',opacity:0.3},
+        {transform:'translateX(0)',opacity:1}
+      ],spring).onfinish=()=>{
+        next.style.opacity='1';
+        next.style.transform='translateX(0)';
+        animating=false;
+      };
+    });
+    updateDots();
+  }
+
+  function resetCarousel(){
+    const s=document.querySelector('[data-n="8"]');
+    if(!s) return;
+    const imgs=s.querySelectorAll('.carousel-img-8');
+    imgs.forEach((img,i)=>{
+      img.style.opacity=i===0?'1':'0';
+      img.style.transform=i===0?'translateX(0)':'translateX(100%)';
+    });
+    ci=0;animating=false;updateDots();
+  }
+
+  function startC(){if(timer)return;resetCarousel();timer=setInterval(runCarousel,3500);}
+  function stopC(){clearInterval(timer);timer=null;}
+
+  const origGoTo2=goTo;
+  goTo=function(n){origGoTo2(n);if(n===8){startC();}else{stopC();}};
+  if(cur===8) startC();
+})();
+
+// Slide 17 DS carousel — right-to-left
+(function(){
+  let ci=0, timer=null, animating=false;
+  const spring={duration:900,easing:'cubic-bezier(0.25, 0.1, 0.25, 1)'};
+  const exitSpring={duration:900,easing:'cubic-bezier(0.25, 0.1, 0.25, 1)'};
+
+  function updateDots(){
+    const s=document.querySelector('[data-n="17"]');
+    if(!s) return;
+    s.querySelectorAll('[data-di17]').forEach((d,i)=>{
+      d.className=i===ci?'cdot cdot-on':'cdot';
+    });
+  }
+
+  function runCarousel(){
+    if(animating) return;
+    const s=document.querySelector('[data-n="17"]');
+    if(!s) return;
+    const imgs=s.querySelectorAll('.carousel-img-17');
+    if(imgs.length===0) return;
+    animating=true;
+    const prev=imgs[ci];
+    ci=(ci+1)%imgs.length;
+    const next=imgs[ci];
+    prev.animate([
+      {transform:'translateX(0)',opacity:1},
+      {transform:'translateX(-100%)',opacity:0}
+    ],exitSpring).onfinish=()=>{
+      prev.style.opacity='0';
+      prev.style.transform='translateX(100%)';
+    };
+    next.style.opacity='0';
+    next.style.transform='translateX(100%)';
+    requestAnimationFrame(()=>{
+      next.animate([
+        {transform:'translateX(100%)',opacity:0.3},
+        {transform:'translateX(0)',opacity:1}
+      ],spring).onfinish=()=>{
+        next.style.opacity='1';
+        next.style.transform='translateX(0)';
+        animating=false;
+      };
+    });
+    updateDots();
+  }
+
+  function resetCarousel(){
+    const s=document.querySelector('[data-n="17"]');
+    if(!s) return;
+    const imgs=s.querySelectorAll('.carousel-img-17');
+    imgs.forEach((img,i)=>{
+      img.style.opacity=i===0?'1':'0';
+      img.style.transform=i===0?'translateX(0)':'translateX(100%)';
+    });
+    ci=0;animating=false;updateDots();
+  }
+
+  function startC(){if(timer)return;resetCarousel();timer=setInterval(runCarousel,3500);}
+  function stopC(){clearInterval(timer);timer=null;}
+
+  const origGoTo3=goTo;
+  goTo=function(n){origGoTo3(n);if(n===17){startC();}else{stopC();}};
+  if(cur===17) startC();
+})();
+</script>
+</body>
+</html>
